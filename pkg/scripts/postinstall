@@ -1,0 +1,4 @@
+#!/bin/bash
+
+cp /usr/share/tomcat_startup_hook/tomcat_startup_hook /usr/bin/tomcat_startup_hook
+tomcat_startup_hook

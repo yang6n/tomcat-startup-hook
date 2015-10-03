@@ -1,0 +1,72 @@
+#!/bin/bash
+
+. /usr/libexec/tomcat/functions
+
+# Get the tomcat config (use this for environment specific settings)
+
+if [ -z "${TOMCAT_CFG_LOADED}" ]; then
+  if [ -z "${TOMCAT_CFG}" ]; then
+    TOMCAT_CFG="/etc/tomcat/tomcat.conf"
+  fi
+  . $TOMCAT_CFG
+fi
+
+if [ -z "$CATALINA_BASE" ]; then
+  if [ -n "$NAME" ]; then
+    if [ -z "$TOMCATS_BASE" ]; then
+      TOMCATS_BASE="/var/lib/tomcats/"
+    fi
+    CATALINA_BASE="${TOMCATS_BASE}${NAME}"
+  else
+    CATALINA_BASE="${CATALINA_HOME}"
+  fi
+fi
+VERBOSE=1
+set_javacmd
+cd ${CATALINA_HOME}
+# CLASSPATH munging
+if [ ! -z "$CLASSPATH" ] ; then
+  CLASSPATH="$CLASSPATH":
+fi
+
+if [ -n "$JSSE_HOME" ]; then
+  CLASSPATH="${CLASSPATH}$(build-classpath jcert jnet jsse 2>/dev/null):"
+fi
+CLASSPATH="${CLASSPATH}${CATALINA_HOME}/bin/bootstrap.jar"
+CLASSPATH="${CLASSPATH}:${CATALINA_HOME}/bin/tomcat-juli.jar"
+CLASSPATH="${CLASSPATH}:${CATALINA_HOME}/lib/annotations-api.jar"
+CLASSPATH="${CLASSPATH}:${CATALINA_HOME}/lib/catalina-ant.jar"
+CLASSPATH="${CLASSPATH}:${CATALINA_HOME}/lib/catalina-ha.jar"
+CLASSPATH="${CLASSPATH}:${CATALINA_HOME}/lib/catalina.jar"
+CLASSPATH="${CLASSPATH}:${CATALINA_HOME}/lib/catalina-tribes.jar"
+CLASSPATH="${CLASSPATH}:${CATALINA_HOME}/lib/commons-collections.jar"
+CLASSPATH="${CLASSPATH}:${CATALINA_HOME}/lib/commons-dbcp.jar"
+CLASSPATH="${CLASSPATH}:${CATALINA_HOME}/lib/commons-pool.jar"
+CLASSPATH="${CLASSPATH}:${CATALINA_HOME}/lib/jasper-el.jar"
+CLASSPATH="${CLASSPATH}:${CATALINA_HOME}/lib/jasper.jar"
+CLASSPATH="${CLASSPATH}:${CATALINA_HOME}/lib/jasper-jdt.jar"
+CLASSPATH="${CLASSPATH}:${CATALINA_HOME}/lib/log4j.jar"
+CLASSPATH="${CLASSPATH}:${CATALINA_HOME}/lib/tomcat7-websocket.jar"
+CLASSPATH="${CLASSPATH}:${CATALINA_HOME}/lib/tomcat-api.jar"
+CLASSPATH="${CLASSPATH}:${CATALINA_HOME}/lib/tomcat-coyote.jar"
+CLASSPATH="${CLASSPATH}:${CATALINA_HOME}/lib/tomcat-el-2.2-api.jar"
+CLASSPATH="${CLASSPATH}:${CATALINA_HOME}/lib/tomcat-i18n-es.jar"
+CLASSPATH="${CLASSPATH}:${CATALINA_HOME}/lib/tomcat-i18n-fr.jar"
+CLASSPATH="${CLASSPATH}:${CATALINA_HOME}/lib/tomcat-i18n-ja.jar"
+CLASSPATH="${CLASSPATH}:${CATALINA_HOME}/lib/tomcat-jdbc.jar"
+CLASSPATH="${CLASSPATH}:${CATALINA_HOME}/lib/tomcat-jsp-2.2-api.jar"
+CLASSPATH="${CLASSPATH}:${CATALINA_HOME}/lib/tomcat-juli.jar"
+CLASSPATH="${CLASSPATH}:${CATALINA_HOME}/lib/tomcat-servlet-3.0-api.jar"
+CLASSPATH="${CLASSPATH}:${CATALINA_HOME}/lib/tomcat-util.jar"
+CLASSPATH="${CLASSPATH}:${CATALINA_HOME}/lib/websocket-api.jar"
+
+CLASSPATH="${CLASSPATH}:/usr/libexec/tomcat/tomcat-startup-hook.jar"
+
+CLASSPATH="${CLASSPATH}:$(build-classpath commons-daemon 2>/dev/null)"
+
+if [ -z "$LOGGING_PROPERTIES" ] ; then
+  LOGGING_PROPERTIES="${CATALINA_BASE}/conf/logging.properties"
+  if [ ! -f "${LOGGING_PROPERTIES}" ] ; then
+    LOGGING_PROPERTIES="${CATALINA_HOME}/conf/logging.properties"
+  fi
+fi

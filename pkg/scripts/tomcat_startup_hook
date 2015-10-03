@@ -1,0 +1,11 @@
+#!/bin/bash
+
+echo "POST INSTALL SCRIPT EXCUTING"
+
+\cp /usr/share/tomcat_startup_hook/tomcat-startup-hook.jar /usr/libexec/tomcat/tomcat-startup-hook.jar
+
+\cp /usr/libexec/tomcat/server /usr/libexec/tomcat/server.bak
+\cp /usr/share/tomcat_startup_hook/server /usr/libexec/tomcat/server
+
+\cp /usr/libexec/tomcat/preamble /usr/libexec/tomcat/preamble.bak 
+\cp /usr/share/tomcat_startup_hook/preamble /usr/libexec/tomcat/preamble

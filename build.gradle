@@ -1,0 +1,48 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.netflix.nebula:gradle-ospackage-plugin:1.12.2'
+    }
+}
+
+apply plugin: 'os-package'
+
+def _version = '1.0.0'
+def _release = '1'
+
+task generateRpm(type: Rpm) {
+	arch = 'x86_64'
+	os = 'LINUX'
+		
+	version _version
+    release _release
+    	
+	from fileTree( "target" ), {
+	    include "tomcat-startup-hook.jar"
+	    fileMode = 0644
+	    addParentDirs = true
+	    user = "root"
+	    into '/usr/share/tomcat_startup_hook/'
+	}
+	
+	from fileTree( "pkg/files/tomcat" ), {
+	    include "*"
+	    fileMode = 0644	    
+	    addParentDirs = true
+	    user = "root"
+	    into '/usr/share/tomcat_startup_hook/'
+	}
+	
+	from fileTree( "pkg/scripts/" ), {
+	    include "*"
+	    fileMode = 0755	    
+	    addParentDirs = true
+	    user = "root"
+	    into '/usr/share/tomcat_startup_hook/'
+	}
+	
+	postInstall = file('pkg/scripts/postinstall')
+}
